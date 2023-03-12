@@ -19,8 +19,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("Particles System")]
     public ParticleSystem ps_SparkGround;
-    public float particleOffsetX;
-    public float particleOffsetY;
+    [SerializeField] private Transform _transformIntantiate;
+    private float _particleSpawnTimer;
+    private ParticleSystem _particleSystem;
     
 
 
@@ -30,13 +31,12 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _coll = GetComponent<BoxCollider2D>();
 
+        _particleSpawnTimer = 0;
+
         
     }
 
-    void FixedUpdate()
-    {
-        Move();
-    }
+    
 
     private void Update()
     {
@@ -45,11 +45,7 @@ public class PlayerController : MonoBehaviour
         Jump();
     }
 
-    public void Move()
-    {
-        transform.position += new Vector3(_speed * Time.deltaTime, 0, 0);
-
-    }
+    
 
     public void Jump()
     {
@@ -62,18 +58,18 @@ public class PlayerController : MonoBehaviour
             transform.DORotate(new Vector3(0f, 0f, transform.rotation.eulerAngles.z - _angle), _duration);
         }
 
-        if (IsGrounded())
-        {
+        // if(IsGrounded() && _particleSystem == null)
+        // {
+        //     _particleSystem = Instantiate(ps_SparkGround, _transformIntantiate.position,Quaternion.Euler(new Vector3(-90,90,0.6f)));
+        //     _particleSystem.transform.parent = _transformIntantiate;
+        // }
 
-            ps_SparkGround.Play();
+        // if(!IsGrounded() && _particleSystem != null)
+        // {
+        //     Destroy(_particleSystem.gameObject);
+        //     _particleSystem = null;
+        // }
 
-        }
-        else
-        {
-            ps_SparkGround.Stop();
-
-
-        }
     }
 
     public bool IsGrounded()
