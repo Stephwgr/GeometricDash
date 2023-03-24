@@ -19,10 +19,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("Particles System")]
     public ParticleSystem ps_SparkGround;
-    [SerializeField] private Transform _transformIntantiate;
-    private float _particleSpawnTimer;
-    private ParticleSystem _particleSystem;
-    
+    public bool _groundPS = false;
+
+
 
 
 
@@ -31,12 +30,10 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _coll = GetComponent<BoxCollider2D>();
 
-        _particleSpawnTimer = 0;
 
-        
+
+
     }
-
-    
 
     private void Update()
     {
@@ -44,8 +41,6 @@ public class PlayerController : MonoBehaviour
 
         Jump();
     }
-
-    
 
     public void Jump()
     {
@@ -56,13 +51,26 @@ public class PlayerController : MonoBehaviour
 
             //DoTween Rotation
             transform.DORotate(new Vector3(0f, 0f, transform.rotation.eulerAngles.z - _angle), _duration);
+
+
+            _groundPS = true;
         }
 
-        // if(IsGrounded() && _particleSystem == null)
-        // {
-        //     _particleSystem = Instantiate(ps_SparkGround, _transformIntantiate.position,Quaternion.Euler(new Vector3(-90,90,0.6f)));
-        //     _particleSystem.transform.parent = _transformIntantiate;
-        // }
+
+
+        if (IsGrounded())
+        {
+            // Instantiate(ps_SparkGround, transform.position, Quaternion.identity);
+            // DestroyImmediate(ps_SparkGround, true);
+           
+            
+            // ps_SparkGround.Play();
+
+            _groundPS = false;
+
+
+
+        }
 
         // if(!IsGrounded() && _particleSystem != null)
         // {
@@ -72,13 +80,14 @@ public class PlayerController : MonoBehaviour
 
     }
 
+
     public bool IsGrounded()
     {
 
         RaycastHit2D hit;
-        hit = Physics2D.Raycast(transform.position, Vector2.down, _hitDistance, _groundMask);    
+        hit = Physics2D.Raycast(transform.position, Vector2.down, _hitDistance, _groundMask);
 
-
+        
 
         return hit;
     }
