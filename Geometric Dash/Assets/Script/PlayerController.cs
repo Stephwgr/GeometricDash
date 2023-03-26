@@ -9,19 +9,21 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rb;
     private BoxCollider2D _coll;
 
+    [Header("Script")]
+    private PlayerParticle _playerParticle;
+
     [Header("Rotation Cube")]
     public float _duration;
     public float _angle;
 
     [Header("Ground Check")]
     public float _hitDistance;
+    public Vector3 _hitPoint;
     [SerializeField] LayerMask _groundMask;
 
     [Header("Particles System")]
-    public ParticleSystem ps_SparkGround;
-    public bool _groundPS = false;
-
-
+    public GameObject _sparkGroundPrefab;
+    public bool hasLanded = false;
 
 
 
@@ -29,10 +31,6 @@ public class PlayerController : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _coll = GetComponent<BoxCollider2D>();
-
-
-
-
     }
 
     private void Update()
@@ -40,55 +38,47 @@ public class PlayerController : MonoBehaviour
         Debug.DrawRay(transform.position, Vector2.down * _hitDistance, Color.red);
 
         Jump();
+
+        if (IsGrounded() && !hasLanded)
+        {
+            GameObject landingPS = Instantiate(_sparkGroundPrefab, _hitPoint, Quaternion.identity);
+            Destroy(landingPS, 2f);
+
+            hasLanded = true;
+        }
+
+        if(!IsGrounded())
+        {
+            hasLanded = false;
+        }
     }
 
     public void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
-
             _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
 
             //DoTween Rotation
             transform.DORotate(new Vector3(0f, 0f, transform.rotation.eulerAngles.z - _angle), _duration);
 
-
-            _groundPS = true;
         }
-
-
-
-        if (IsGrounded())
-        {
-            // Instantiate(ps_SparkGround, transform.position, Quaternion.identity);
-            // DestroyImmediate(ps_SparkGround, true);
-           
-            
-            // ps_SparkGround.Play();
-
-            _groundPS = false;
-
-
-
-        }
-
-        // if(!IsGrounded() && _particleSystem != null)
-        // {
-        //     Destroy(_particleSystem.gameObject);
-        //     _particleSystem = null;
-        // }
-
     }
 
 
     public bool IsGrounded()
     {
-
         RaycastHit2D hit;
         hit = Physics2D.Raycast(transform.position, Vector2.down, _hitDistance, _groundMask);
+        _hitPoint = hit.point;
 
-        
-
-        return hit;
+        if (hit.collider != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
