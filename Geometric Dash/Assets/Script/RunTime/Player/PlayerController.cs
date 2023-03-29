@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public float dashingCooldown = 1f;
     private bool canDash = true;
     private bool isDashing;
+    public TrailRenderer _trail;
 
     [Header("Rotation Cube")]
     public float _duration;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Particles System")]
     public GameObject _sparkGroundPrefab;
+    public ParticleSystem _dashPS;
     public bool hasLanded = false;
 
 
@@ -36,6 +38,7 @@ public class PlayerController : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _coll = GetComponent<BoxCollider2D>();
+        _trail = GetComponent<TrailRenderer>();
     }
 
     private void Update()
@@ -117,12 +120,15 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator Dash()
     {
+
         canDash = false;
         isDashing = true;
         float originalGravity = _rb.gravityScale;
         _rb.gravityScale = 0f;
-        _rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+        _rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);  
+        _trail.emitting = true;
         yield return new WaitForSeconds(dashingTime);
+        _trail.emitting = false;
         _rb.gravityScale = originalGravity;
         isDashing = false;
         yield return new WaitForSeconds(dashingCooldown);
