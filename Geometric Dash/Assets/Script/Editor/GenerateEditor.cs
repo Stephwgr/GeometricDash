@@ -16,6 +16,7 @@ public class GenerateEditor : Editor
         #region  Design Button
 
         GUILayout.Space(30);
+        
         GUIStyle _buttonStyle = new GUIStyle(GUI.skin.button);
         _buttonStyle.normal.background = MakeTex(2, 2, new Color(0.1f, 0.5f, 0.1f));
 
