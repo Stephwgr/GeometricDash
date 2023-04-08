@@ -6,7 +6,6 @@ using DG.Tweening;
 public class PlayerController : MonoBehaviour
 {
     [Header("Player")]
-    [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
     private Rigidbody2D _rb;
     private BoxCollider2D _coll;
